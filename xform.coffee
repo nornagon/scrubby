@@ -1,25 +1,12 @@
-esprima = require 'esprima'
-escodegen = require 'escodegen'
-
-process.stdin.resume()
-process.stdin.setEncoding 'utf8'
-
-data = ''
-process.stdin.on 'data', (chunk) ->
-  data += chunk
-
-process.stdin.on 'end', ->
-  process.stdout.write escodegen.generate form data
-
-form = (program) ->
-  parsed = esprima.parse program
+xform = (code) ->
+  parsed = esprima.parse code, range: true
 
   $values = {}
   nextId = 1
   replace = (e) ->
-    if e.type is 'Literal'
+    if e.type is 'Literal' and typeof e.value is 'number'
       id = nextId++
-      $values[id] = e.value
+      $values[id] = {value: e.value, range: e.range}
       type: "MemberExpression"
       computed: true
       object:
@@ -30,6 +17,24 @@ form = (program) ->
         value: ''+id
     else
       transform e, replace
+
+  # calls |f| on each node in the AST |object|
+  transform = (object, f) ->
+    if object instanceof Array
+      newObject = []
+      for v,i in object
+        if typeof v is 'object' && v isnt null
+          newObject[i] = f(v)
+        else
+          newObject[i] = v
+    else
+      newObject = {}
+      for own key, value of object
+        if typeof value is 'object' && value isnt null
+          newObject[key] = f(value)
+        else
+          newObject[key] = value
+    newObject
 
   xformed = transform parsed, replace
   xformed.body.unshift
@@ -47,29 +52,12 @@ form = (program) ->
               value: k
             value:
               type: 'Literal'
-              value: v
+              value: v.value
             kind: 'init'
           } for k, v of $values
         )
     ]
     kind: 'var'
-  xformed
+  { ast: xformed, values: $values }
 
-
-# calls |f| on each node in the AST |object|
-transform = (object, f) ->
-  if object instanceof Array
-    newObject = []
-    for v,i in object
-      if typeof v is 'object' && v isnt null
-        newObject[i] = f(v)
-      else
-        newObject[i] = v
-  else
-    newObject = {}
-    for own key, value of object
-      if typeof value is 'object' && value isnt null
-        newObject[key] = f(value)
-      else
-        newObject[key] = value
-  newObject
+window.xform = xform

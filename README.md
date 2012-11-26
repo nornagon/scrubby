@@ -1,3 +1,7 @@
+JavaScript source transformation to support [Bret Victor](http://vimeo.com/36579366)-style value-scrubbing interfaces with the information without having to recompile code every time the value changes.
+
+[Try it out](http://libris.nornagon.net/jca/scrubby/scrubby.html)!
+
 Transforms this JavaScript:
 
 ```javascript
@@ -18,5 +22,3 @@ var x = $values['1'], y = $values['2'];
 ctx.moveTo(x, y);
 ctx.lineTo(x + $values['3'], y);
 ```
-
-with the idea being that you could build some [Bret Victor](http://vimeo.com/36579366)-style value-scrubbing interfaces with the information without having to recompile any code.
