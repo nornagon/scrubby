@@ -1,0 +1,12 @@
+<!doctype html>
+<script src='node_modules/esprima/esprima.js'></script>
+<script src='node_modules/escodegen/escodegen.js'></script>
+<script src='xform.js'></script>
+<script src='scrubby.js'></script>
+<script src='example.js' type='text/scrubby'></script>
+<script type='text/scrubby'>
+  (function q() {
+    frame();
+    setTimeout(q, 1000/60);
+  })();
+</script>

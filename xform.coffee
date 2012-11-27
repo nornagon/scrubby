@@ -1,4 +1,4 @@
-xform = (code) ->
+xform = (code, prefix='') ->
   parsed = esprima.parse code, range: true
 
   $values = {}
@@ -6,7 +6,7 @@ xform = (code) ->
   replace = (e) ->
     if e.type is 'Literal' and typeof e.value is 'number'
       id = nextId++
-      $values[id] = {value: e.value, range: e.range}
+      $values[prefix+id] = {value: e.value, range: e.range}
       type: "MemberExpression"
       computed: true
       object:
@@ -14,7 +14,7 @@ xform = (code) ->
         name: '$values'
       property:
         type: 'Literal'
-        value: ''+id
+        value: prefix+''+id
     else
       transform e, replace
 
@@ -37,27 +37,6 @@ xform = (code) ->
     newObject
 
   xformed = transform parsed, replace
-  xformed.body.unshift
-    type: 'VariableDeclaration'
-    declarations: [
-      type: 'VariableDeclarator'
-      id: { type: 'Identifier', name: '$values' }
-      init:
-        type: 'ObjectExpression',
-        properties: (
-          {
-            type: 'Property'
-            key:
-              type: 'Literal'
-              value: k
-            value:
-              type: 'Literal'
-              value: v.value
-            kind: 'init'
-          } for k, v of $values
-        )
-    ]
-    kind: 'var'
   { ast: xformed, values: $values }
 
 window.xform = xform

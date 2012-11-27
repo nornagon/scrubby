@@ -3,8 +3,11 @@
   var xform,
     __hasProp = {}.hasOwnProperty;
 
-  xform = function(code) {
-    var $values, k, nextId, parsed, replace, transform, v, xformed;
+  xform = function(code, prefix) {
+    var $values, nextId, parsed, replace, transform, xformed;
+    if (prefix == null) {
+      prefix = '';
+    }
     parsed = esprima.parse(code, {
       range: true
     });
@@ -14,7 +17,7 @@
       var id;
       if (e.type === 'Literal' && typeof e.value === 'number') {
         id = nextId++;
-        $values[id] = {
+        $values[prefix + id] = {
           value: e.value,
           range: e.range
         };
@@ -27,7 +30,7 @@
           },
           property: {
             type: 'Literal',
-            value: '' + id
+            value: prefix + '' + id
           }
         };
       } else {
@@ -61,42 +64,6 @@
       return newObject;
     };
     xformed = transform(parsed, replace);
-    xformed.body.unshift({
-      type: 'VariableDeclaration',
-      declarations: [
-        {
-          type: 'VariableDeclarator',
-          id: {
-            type: 'Identifier',
-            name: '$values'
-          },
-          init: {
-            type: 'ObjectExpression',
-            properties: (function() {
-              var _results;
-              _results = [];
-              for (k in $values) {
-                v = $values[k];
-                _results.push({
-                  type: 'Property',
-                  key: {
-                    type: 'Literal',
-                    value: k
-                  },
-                  value: {
-                    type: 'Literal',
-                    value: v.value
-                  },
-                  kind: 'init'
-                });
-              }
-              return _results;
-            })()
-          }
-        }
-      ],
-      kind: 'var'
-    });
     return {
       ast: xformed,
       values: $values
