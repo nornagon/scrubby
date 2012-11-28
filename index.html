@@ -52,7 +52,7 @@
     display: none;
   }
   pre {
-    font-family: 'SourceCodeProRegular', monospace;
+    font-family: Consolas, 'Liberation Mono', Courier, monospace;
     text-shadow: 0px 1px 0px white;
     font-size: 12pt;
     line-height: 1.2em;
@@ -72,6 +72,21 @@
   p {
     font-family: georgia;
     text-shadow: 0px 1px 0px rgba(0,0,0,0.3);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+  }
+
+  code {
+    font-family: Consolas, 'Liberation Mono', Courier, monospace;
+    margin: 0 2px;
+    padding: 0px 5px;
+    border: 1px solid hsl(0, 0%, 92%);
+    background-color: hsl(0, 0%, 97%);
+    border-radius: 3px;
+    white-space: nowrap;
+    text-shadow: none;
   }
 </style>
 <h1>Scrubby</h1>
@@ -86,34 +101,32 @@ Inspired by <a href='http://vimeo.com/36579366'>Bret Victor</a>.</p>
     <div id='code'></div>
   </div>
 </div>
-<p>For more info and to see how to use Scrubby in your own projects, visit the <a
-  href='https://github.com/nornagon/scrubby'>GitHub page</a>.
-</p>
+<p>Scrubby works by transforming your code using <a href="https://github.com/constellation/esprima">esprima</a> and <a href="https://github.com/constellation/escodegen">escodegen</a> to replace any literal references by a reference into a global table of values. When you scrub a value, scrubby just updates the global table, so the next time your code references that literal, it receives the edited value.</p>
+<p>Using scrubby in your own code is easy: just add <code>&lt;script src='http://nornagon.github.com/scrubby/scrubby.all.js'&gt;</code> to your page and add <code>type='text/scrubby'</code> to scripts you want to be able to scrub. See <a href='https://github.com/nornagon/scrubby'>github</a> for more details.</p>
 <p>
 Written by me, <a href='http://nornagon.net'>Jeremy Apthorp</a>. You should <a
   href='http://twitter.com'>follow me on Twitter</a>.
 </p>
 <a href="https://github.com/nornagon/scrubby"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
-<script type='text/scrubby'>
-  function draw() {
-    canvas.width = canvas.height = 400
-    ctx = canvas.getContext('2d')
-    ctx.fillStyle = 'rgba('+240+','+240+','+250+','+1.0+')'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+<script type='text/scrubby'>function draw() {
+  canvas.width = canvas.height = 400
+  ctx = canvas.getContext('2d')
+  ctx.fillStyle = 'rgba('+240+','+240+','+250+','+1.0+')'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-    ctx.fillStyle = 'rgba('+200+','+100+','+200+','+1.0+')'
+  ctx.fillStyle = 'rgba('+200+','+100+','+200+','+1.0+')'
 
-    ctx.translate(canvas.width/2, canvas.height/2)
-    var N = 10
-    for (var i = 0; i < N; i++) {
-      ctx.save()
-      ctx.rotate(i/N*Math.PI*2)
-      ctx.translate(0, 10)
-      ctx.rotate(90 * Math.PI/180)
-      ctx.fillRect(0, 0, 90, 50)
-      ctx.restore()
-    }
+  ctx.translate(canvas.width/2, canvas.height/2)
+  var N = 10
+  for (var i = 0; i < N; i++) {
+    ctx.save()
+    ctx.rotate(i/N*Math.PI*2)
+    ctx.translate(0, 10)
+    ctx.rotate(90 * Math.PI/180)
+    ctx.fillRect(0, 0, 90, 50)
+    ctx.restore()
   }
+}
 </script>
 <script>
   window.addEventListener('DOMContentLoaded', function() {
