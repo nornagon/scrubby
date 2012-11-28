@@ -6368,7 +6368,53 @@ parseStatement: true, parseSourceElement: true */
     }
   };
 
+    removeInput = function(input) {
+
+        //set the parent container's text value to the value of the input
+        input.parentNode.textContent = input.value;
+
+        //remove this input from the parent container
+        input.parentNode.removeChild(input);
+
+        window.$values[parent.value_id] = input.value;
+        window.scrubby.emit('scrubbed');
+    };
+
+    openInput = function(s) {
+
+        //if we already have an input inside of this span, return
+        if (s.getElementsByTagName('input').length > 0) { 
+            return;
+        }
+        //create a new input with the current span's value
+        var input = document.createElement('input');
+        input.setAttribute('type', 'text');
+        input.setAttribute('value', s.textContent);
+        input.style.width = '35px';
+        input.style.fontSize = '10px';
+        
+
+        //listen for blur event and close the input
+        input.addEventListener('blur', function(){
+            removeInput(this);
+        });
+        
+        //clear the text content to make room for the input
+        s.textContent = ''; 
+
+        //append the input to the span
+        s.appendChild(input);
+
+        //focus the cursor on the new input
+        input.focus();
+    };
+
   attachScrubber = function(w, s) {
+
+    s.addEventListener('dblclick', function(){
+        openInput(s);
+    }, false); 
+
     return s.addEventListener('mousedown', function(e) {
       var delta, moved, mx, my, originalValue, up;
       e.preventDefault();
@@ -6396,6 +6442,7 @@ parseStatement: true, parseSourceElement: true */
   };
 
   makeScrubbingContext = function(w, name) {
+    console.log('made context');
     var code_text, curpos, i, newCode, scrubber, val, _ref;
     w.document.head.appendChild(document.createElement('style')).textContent = '.scrub {\n  cursor: ew-resize;\n  border-bottom: 1px dashed blue;\n}\nhtml.dragging {\n  cursor: ew-resize;\n}';
     code_text = sources[name].orig;
