@@ -1,0 +1,127 @@
+<!doctype html>
+<title>Scrubby</title>
+<script src='scrubby.all.js'></script>
+<style>
+  @font-face {
+      font-family: 'HVDComicSerifProRegular';
+      src: url('HVD_Comic_Serif_Pro-webfont.eot');
+      src: url('HVD_Comic_Serif_Pro-webfont.eot?#iefix') format('embedded-opentype'),
+           url('HVD_Comic_Serif_Pro-webfont.woff') format('woff'),
+           url('HVD_Comic_Serif_Pro-webfont.ttf') format('truetype'),
+           url('HVD_Comic_Serif_Pro-webfont.svg#HVDComicSerifProRegular') format('svg');
+      font-weight: normal;
+      font-style: normal;
+  }
+
+  @font-face {
+      font-family: 'SourceCodeProRegular';
+      src: url('SourceCodePro-Regular-webfont.eot');
+      src: url('SourceCodePro-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+           url('SourceCodePro-Regular-webfont.woff') format('woff'),
+           url('SourceCodePro-Regular-webfont.ttf') format('truetype'),
+           url('SourceCodePro-Regular-webfont.svg#SourceCodeProRegular') format('svg');
+      font-weight: normal;
+      font-style: normal;
+  }
+
+  body { text-align: center; margin: 0; }
+  canvas {
+    box-shadow: 1px 1px 6px rgba(0,0,0,0.4);
+  }
+  #code {
+    text-align: left;
+    -webkit-flex: 1;
+  }
+  .canvas { 
+    -webkit-flex: 1;
+  }
+  #container {
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    margin: auto;
+  }
+  #containercontainer {
+    width: 100%;
+    background: rgb(248, 248, 248);
+    padding-top: 15px;
+    padding-bottom: 15px;
+    box-shadow: 0px 1px 7px rgba(0,0,0,0.2) inset;
+  }
+  .scrubby-files {
+    display: none;
+  }
+  pre {
+    font-family: 'SourceCodeProRegular', monospace;
+    text-shadow: 0px 1px 0px white;
+    font-size: 12pt;
+    line-height: 1.2em;
+  }
+
+  h1 {
+    font-family: 'HVDComicSerifProRegular';
+    text-transform: uppercase;
+    font-size: 36pt;
+    line-height: 0.9em;
+    text-shadow: 0px 1px 0px hsl(91, 43%, 63%), 0px 2px 0px hsl(91, 43%, 73%), 0px 3px 0px hsl(91, 43%, 83%), 0px 3px 1px hsla(0, 0%, 0%, 0.2), 0px 0px 10px hsla(0, 0%, 0%, 0.3);
+  }
+
+  html {
+    font-family: Helvetica, arial, sans-serif;
+  }
+  p {
+    font-family: georgia;
+    text-shadow: 0px 1px 0px rgba(0,0,0,0.3);
+  }
+</style>
+<h1>Scrubby</h1>
+<p>Grab a literal in the code and drag left-to-right to update the value in
+real-time.
+Inspired by <a href='http://vimeo.com/36579366'>Bret Victor</a>.</p>
+<div id='containercontainer'>
+  <div id='container'>
+    <div class='canvas'>
+      <canvas id='canvas'></canvas>
+    </div>
+    <div id='code'></div>
+  </div>
+</div>
+<p>For more info and to see how to use Scrubby in your own projects, visit the <a
+  href='https://github.com/nornagon/scrubby'>GitHub page</a>.
+</p>
+<p>
+Written by me, <a href='http://nornagon.net'>Jeremy Apthorp</a>. You should <a
+  href='http://twitter.com'>follow me on Twitter</a>.
+</p>
+<a href="https://github.com/nornagon/scrubby"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+<script type='text/scrubby'>
+  function draw() {
+    canvas.width = canvas.height = 400
+    ctx = canvas.getContext('2d')
+    ctx.fillStyle = 'rgba('+240+','+240+','+250+','+1.0+')'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    ctx.fillStyle = 'rgba('+200+','+100+','+200+','+1.0+')'
+
+    ctx.translate(canvas.width/2, canvas.height/2)
+    var N = 10
+    for (var i = 0; i < N; i++) {
+      ctx.save()
+      ctx.rotate(i/N*Math.PI*2)
+      ctx.translate(0, 10)
+      ctx.rotate(90 * Math.PI/180)
+      ctx.fillRect(0, 0, 90, 50)
+      ctx.restore()
+    }
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', function() {
+    draw()
+    scrubby.on('scrubbed', function() {
+      draw()
+    })
+    var f = scrubby.makeScrubbingFrame('inline#1')
+    code.appendChild(f)
+  })
+</script>
