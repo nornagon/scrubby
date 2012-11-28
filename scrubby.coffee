@@ -99,14 +99,14 @@ attachScrubber = (w, s) ->
   s.addEventListener 'mousedown', (e) ->
     e.preventDefault()
     mx = e.pageX; my = e.pageY
-    originalValue = Number(s.innerText)
+    originalValue = Number(s.textContent)
     delta = deltaForNumber originalValue
     w.document.documentElement.classList.add('dragging')
 
     moved = (e) ->
       e.preventDefault()
       d = Number((Math.round((e.pageX - mx)/2)*delta + originalValue).toFixed(5))
-      s.innerText = d
+      s.textContent = d
       window.$values[s.value_id] = d
       window.scrubby.emit 'scrubbed'
     w.addEventListener('mousemove', moved)
@@ -135,7 +135,7 @@ makeScrubbingContext = (w, name) ->
   for i,val of sources[name].xfmd.values
     newCode.appendChild(document.createTextNode(code_text.substring(curpos, val.range[0])))
     scrubber = newCode.appendChild(document.createElement('span'))
-    scrubber.innerText = window.$values[i]
+    scrubber.textContent = window.$values[i]
     scrubber.className = 'scrub'
     scrubber.value_id = i
     attachScrubber w, scrubber
@@ -145,7 +145,7 @@ makeScrubbingContext = (w, name) ->
 
 makeScrubbyButton = (name) ->
   b = document.createElement('button')
-  b.innerText = name.replace(location.origin+'/', '')
+  b.textContent = name.replace(location.origin+'/', '')
   b.onclick = ->
     bounds = 'left='+screenX+',top='+screenY+',width=600,height=500'
     w = window.open('','_blank','menubar=no,location=no,resizable=yes,scrollbars=yes,status=no,'+bounds)

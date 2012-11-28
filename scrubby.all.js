@@ -6374,14 +6374,14 @@ parseStatement: true, parseSourceElement: true */
       e.preventDefault();
       mx = e.pageX;
       my = e.pageY;
-      originalValue = Number(s.innerText);
+      originalValue = Number(s.textContent);
       delta = deltaForNumber(originalValue);
       w.document.documentElement.classList.add('dragging');
       moved = function(e) {
         var d;
         e.preventDefault();
         d = Number((Math.round((e.pageX - mx) / 2) * delta + originalValue).toFixed(5));
-        s.innerText = d;
+        s.textContent = d;
         window.$values[s.value_id] = d;
         return window.scrubby.emit('scrubbed');
       };
@@ -6406,7 +6406,7 @@ parseStatement: true, parseSourceElement: true */
       val = _ref[i];
       newCode.appendChild(document.createTextNode(code_text.substring(curpos, val.range[0])));
       scrubber = newCode.appendChild(document.createElement('span'));
-      scrubber.innerText = window.$values[i];
+      scrubber.textContent = window.$values[i];
       scrubber.className = 'scrub';
       scrubber.value_id = i;
       attachScrubber(w, scrubber);
@@ -6419,7 +6419,7 @@ parseStatement: true, parseSourceElement: true */
   makeScrubbyButton = function(name) {
     var b;
     b = document.createElement('button');
-    b.innerText = name.replace(location.origin + '/', '');
+    b.textContent = name.replace(location.origin + '/', '');
     b.onclick = function() {
       var bounds, newCode, w;
       bounds = 'left=' + screenX + ',top=' + screenY + ',width=600,height=500';
