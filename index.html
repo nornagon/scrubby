@@ -13,17 +13,6 @@
       font-style: normal;
   }
 
-  @font-face {
-      font-family: 'SourceCodeProRegular';
-      src: url('SourceCodePro-Regular-webfont.eot');
-      src: url('SourceCodePro-Regular-webfont.eot?#iefix') format('embedded-opentype'),
-           url('SourceCodePro-Regular-webfont.woff') format('woff'),
-           url('SourceCodePro-Regular-webfont.ttf') format('truetype'),
-           url('SourceCodePro-Regular-webfont.svg#SourceCodeProRegular') format('svg');
-      font-weight: normal;
-      font-style: normal;
-  }
-
   body { text-align: center; margin: 0; }
   canvas {
     box-shadow: 1px 1px 6px rgba(0,0,0,0.4);
@@ -31,12 +20,16 @@
   #code {
     text-align: left;
     -webkit-flex: 1;
+    -moz-box-flex: 1;
   }
   .canvas { 
     -webkit-flex: 1;
+    -moz-box-flex: 1;
   }
   #container {
+    width: 100%;
     display: -webkit-flex;
+    display: -moz-box;
     -webkit-flex-direction: row;
     -webkit-align-items: center;
     margin: auto;
