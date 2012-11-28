@@ -59,19 +59,56 @@ load = (url, cb) ->
       cb() if cb
   xhr.send null
 
+deltaForNumber = (n) ->
+  # big ol' hax to get an approximately okay order-of-magnitude delta for
+  # dragging a number around.
+  # right now this has a tendency to make your number more specific all the
+  # time, which might be problematic.
+  return 1 if n is 0
+  return 0.1 if n is 1
+
+  lastDigit = (n) ->
+    Math.round((n/10-Math.floor(n/10))*10)
+
+  firstSig = (n) ->
+    n = Math.abs(n)
+    i = 0
+    while lastDigit(n) is 0
+      i++
+      n /= 10
+    i
+
+  specificity = (n) ->
+    s = 0
+    loop
+      abs = Math.abs(n)
+      fraction = abs - Math.floor(abs)
+      if fraction < 0.000001
+        return s
+      s++
+      n = n * 10
+
+  s = specificity n
+  if s > 0
+    Math.pow(10, -s)
+  else
+    n = Math.abs n
+    Math.pow 10, Math.max 0, firstSig(n)-1
+
 attachScrubber = (w, s) ->
   s.addEventListener 'mousedown', (e) ->
     e.preventDefault()
     mx = e.pageX; my = e.pageY
     originalValue = Number(s.innerText)
+    delta = deltaForNumber originalValue
     w.document.documentElement.classList.add('dragging')
 
     moved = (e) ->
       e.preventDefault()
-      d = Math.floor((e.pageX - mx)/2) + originalValue
+      d = Number((Math.round((e.pageX - mx)/2)*delta + originalValue).toFixed(5))
       s.innerText = d
       window.$values[s.value_id] = d
-      onValueScrubbed()
+      window.scrubby.emit 'scrubbed'
     w.addEventListener('mousemove', moved)
 
     up = (e) ->
@@ -80,36 +117,39 @@ attachScrubber = (w, s) ->
       w.document.documentElement.classList.remove('dragging')
     w.addEventListener('mouseup', up)
 
+
+makeScrubbingContext = (w, name) ->
+  w.document.head.appendChild(document.createElement('style')).textContent = '''
+    .scrub {
+      cursor: ew-resize;
+      border-bottom: 1px dashed blue;
+    }
+    html.dragging {
+      cursor: ew-resize;
+    }
+  '''
+
+  code_text = sources[name].orig
+  curpos = 0
+  newCode = w.document.createElement('pre')
+  for i,val of sources[name].xfmd.values
+    newCode.appendChild(document.createTextNode(code_text.substring(curpos, val.range[0])))
+    scrubber = newCode.appendChild(document.createElement('span'))
+    scrubber.innerText = window.$values[i]
+    scrubber.className = 'scrub'
+    scrubber.value_id = i
+    attachScrubber w, scrubber
+    curpos = val.range[1]
+  newCode.appendChild(document.createTextNode(code_text.substring(curpos)))
+  return newCode
+
 makeScrubbyButton = (name) ->
   b = document.createElement('button')
   b.innerText = name.replace(location.origin+'/', '')
   b.onclick = ->
-    bounds = 'left='+screenX+',top='+screenY+',width=400,height=500'
+    bounds = 'left='+screenX+',top='+screenY+',width=600,height=500'
     w = window.open('','_blank','menubar=no,location=no,resizable=yes,scrollbars=yes,status=no,'+bounds)
-    w.document.head.appendChild(document.createElement('style')).textContent = '''
-      .scrub {
-        cursor: ew-resize;
-        border-bottom: 1px dashed blue;
-      }
-      html.dragging {
-        cursor: ew-resize;
-      }
-    '''
-
-    code_text = sources[name].orig
-    curpos = 0
-    newCode = w.document.createElement('pre')
-    for i,val of sources[name].xfmd.values
-      newCode.appendChild(document.createTextNode(
-          code_text.substring(curpos, val.range[0])))
-      scrubber = newCode.appendChild(document.createElement('span'))
-      scrubber.innerText = val.value # TODO actually use current value
-      scrubber.className = 'scrub'
-      scrubber.value_id = i
-      attachScrubber w, scrubber
-      curpos = val.range[1]
-    newCode.appendChild(document.createTextNode(
-        code_text.substring(curpos)))
+    newCode = makeScrubbingContext w, name
     w.document.body.appendChild newCode
   b
 
@@ -149,3 +189,15 @@ if window.addEventListener
   addEventListener 'DOMContentLoaded', runScripts, no
 else
   attachEvent 'onload', runScripts
+
+window.scrubby =
+  on: (e, f) ->
+    @_listeners ?= {}
+    (@_listeners[e] ?= []).push f
+  emit: (e, args...) ->
+    return unless @_listeners[e]?
+    l.call(undefined, args...) for l in @_listeners[e]
+    null
+
+  makeScrubbingFrame: (name) ->
+    makeScrubbingContext window, name
