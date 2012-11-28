@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<script src='http://nornagon.github.com/scrubby/scrubby.all.js'></script>
+<style>
+  .ball {
+    position: absolute;
+    left: 100px; top: 100px;
+    width: 50px; height: 50px;
+    border-radius: 25px;
+    background: green;
+  }
+</style>
+<div class='ball'></div>
+<script type='text/scrubby'>
+setInterval(function() {
+  var ball = document.querySelector('.ball');
+  ball.style.left = 100 + 50 * Math.sin(t * 0.2) + 'px';
+  ball.style.top = 100 + 50 * Math.sin(t * 0.2 + 0.4 * Math.PI*2) + 'px';
+}, 1000/60);
+</script>
