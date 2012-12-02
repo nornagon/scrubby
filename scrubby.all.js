@@ -6432,9 +6432,6 @@ parseStatement: true, parseSourceElement: true */
 
   runScripts = function() {
     var execute, id, s, scripts, scrubbyFiles, scrubbys;
-    document.head.appendChild(document.createElement('style')).textContent = '.scrubby-files {\n  position: fixed;\n  top: 4px;\n  right: 4px;\n  padding: 4px;\n  border-radius: 2px;\n  background: rgba(0,0,255,0.4);\n}';
-    scrubbyFiles = document.body.appendChild(document.createElement('div'));
-    scrubbyFiles.className = 'scrubby-files';
     scripts = document.getElementsByTagName('script');
     scrubbys = (function() {
       var _i, _len, _results;
@@ -6447,6 +6444,12 @@ parseStatement: true, parseSourceElement: true */
       }
       return _results;
     })();
+    if (!scrubbys.length) {
+      return;
+    }
+    document.head.appendChild(document.createElement('style')).textContent = '.scrubby-files {\n  position: fixed;\n  top: 4px;\n  right: 4px;\n  padding: 4px;\n  border-radius: 2px;\n  background: rgba(0,0,255,0.4);\n}';
+    scrubbyFiles = document.body.appendChild(document.createElement('div'));
+    scrubbyFiles.className = 'scrubby-files';
     id = 1;
     (execute = function() {
       var name, script;

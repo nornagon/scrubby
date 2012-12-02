@@ -154,6 +154,9 @@ makeScrubbyButton = (name) ->
   b
 
 runScripts = ->
+  scripts = document.getElementsByTagName 'script'
+  scrubbys = (s for s in scripts when s.type is 'text/scrubby')
+  return unless scrubbys.length
   document.head.appendChild(document.createElement('style')).textContent = '''
     .scrubby-files {
       position: fixed;
@@ -166,8 +169,6 @@ runScripts = ->
   '''
   scrubbyFiles = document.body.appendChild(document.createElement('div'))
   scrubbyFiles.className = 'scrubby-files'
-  scripts = document.getElementsByTagName 'script'
-  scrubbys = (s for s in scripts when s.type is 'text/scrubby')
   id = 1
   do execute = ->
     if scrubbys.length is 0
