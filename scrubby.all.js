@@ -6303,15 +6303,20 @@ parseStatement: true, parseSourceElement: true */
   };
 
   load = function(url, cb) {
-    var xhr;
+    var handled, xhr;
     xhr = window.ActiveXObject ? new window.ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest();
     xhr.open('GET', url, true);
     if ('overrideMimeType' in xhr) {
       xhr.overrideMimeType('text/plain');
     }
+    handled = false;
     xhr.onreadystatechange = function() {
       var _ref;
+      if (handled) {
+        return;
+      }
       if (xhr.readyState === 4) {
+        handled = true;
         if ((_ref = xhr.status) === 0 || _ref === 200) {
           prepare(xhr.responseText, url);
         } else {

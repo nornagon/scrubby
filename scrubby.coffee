@@ -50,8 +50,11 @@ load = (url, cb) ->
     new XMLHttpRequest()
   xhr.open 'GET', url, true
   xhr.overrideMimeType 'text/plain' if 'overrideMimeType' of xhr
+  handled = false
   xhr.onreadystatechange = ->
+    return if handled
     if xhr.readyState is 4
+      handled = true
       if xhr.status in [0, 200]
         prepare xhr.responseText, url
       else
