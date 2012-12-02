@@ -6248,7 +6248,7 @@ parseStatement: true, parseSourceElement: true */
   hasRun = false;
 
   run = function() {
-    var k, s, v, _i, _len, _results;
+    var k, s, v, _i, _len;
     if (hasRun) {
       throw "can't dynamically load scrubbys yet";
     }
@@ -6294,12 +6294,11 @@ parseStatement: true, parseSourceElement: true */
         }
       ]
     }));
-    _results = [];
     for (_i = 0, _len = toRun.length; _i < _len; _i++) {
       s = toRun[_i];
-      _results.push(window["eval"](s));
+      window["eval"](s);
     }
-    return _results;
+    return scrubby.emit('loaded');
   };
 
   load = function(url, cb) {

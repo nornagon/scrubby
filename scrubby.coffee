@@ -42,6 +42,7 @@ run = ->
     ]
   for s in toRun
     window.eval s
+  scrubby.emit 'loaded'
 
 load = (url, cb) ->
   xhr = if window.ActiveXObject
