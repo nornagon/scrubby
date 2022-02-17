@@ -1,6 +1,6 @@
-JavaScript source transformation to support [Bret Victor](http://vimeo.com/36579366)-style value-scrubbing interfaces with the information without having to recompile code every time the value changes.
+JavaScript source transformation to support [Bret Victor](https://vimeo.com/36579366)-style value-scrubbing interfaces with the information without having to recompile code every time the value changes.
 
-[Try it out](http://nornagon.github.com/scrubby)!
+[Try it out](https://nornagon.github.io/scrubby)!
 
 ## API
 
@@ -9,7 +9,7 @@ mark any scripts you want to scrub with `type=text/scrubby`.
 
 ```html
 <!DOCTYPE html>
-<script src='http://nornagon.github.com/scrubby/scrubby.all.js'></script>
+<script src='https://raw.githubusercontent.com/nornagon/scrubby/master/scrubby.all.js'></script>
 <style>
   .ball {
     position: absolute;
@@ -33,7 +33,7 @@ setInterval(function() {
 </script>
 ```
 
-(See this example [live](http://nornagon.github.com/scrubby/example.html).)
+(See this example [live](https://nornagon.github.io/scrubby/example.html).)
 
 Scrubby adds a button to the top-left of the page for each script you specify that's scrubbable. Clicking on that button will open a new window with the code in it, and you can scrub live immediately.
 
@@ -47,7 +47,7 @@ scrubby.on('scrubbed', function() {
 })
 ```
 
-(the [demo code](http://nornagon.github.com/scrubby) does this to update the canvas when you edit a value.)
+(the [demo code](https://nornagon.github.io/scrubby) does this to update the canvas when you edit a value.)
 
 ## How it works
 
